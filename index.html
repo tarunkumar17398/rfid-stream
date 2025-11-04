@@ -1,38 +1,35 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>RFID LIVE LOG</title>
-  <style>
-    body { font-family: Arial; padding: 30px; }
-    table { border-collapse: collapse; width: 100%; }
-    th,td { border:1px solid #444;padding:8px;text-align:left;}
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8">
+    <title>RFID LIVE</title>
+    <style>
+      body { font-family:Arial; padding:20px; font-size:22px; }
+      .tag { padding:8px; border-bottom:1px solid #ddd; }
+    </style>
+  </head>
+  <body>
+    <h2>RFID LIVE VIEW</h2>
+    <div id="list"></div>
 
-<h2>RFID LIVE LOG</h2>
-<p>Last updated: <span id="time"></span></p>
+    <script>
+      let buffer = "";
 
-<table id="table">
-  <tr><th>EPC</th><th>Time</th></tr>
-</table>
-
-<script>
-function load() {
-  fetch("data.json?nocache="+Date.now())
-  .then(r => r.json())
-  .then(rows=>{
-    let tbody="";
-    rows.slice().reverse().forEach(r=>{
-      tbody+=`<tr><td>${r.epc}</td><td>${r.time}</td></tr>`
-    });
-    document.querySelector("#table").innerHTML="<tr><th>EPC</th><th>Time</th></tr>"+tbody;
-    document.getElementById("time").innerText = new Date().toLocaleString();
-  });
-}
-setInterval(load,2000);
-load();
-</script>
-
-</body>
+      document.addEventListener("keypress", (e)=>{
+        if(e.key === "Enter"){
+          // complete tag arrived
+          const tag = buffer.trim();
+          buffer = "";
+          if(tag.length > 0){
+            const div = document.createElement("div");
+            div.className="tag";
+            div.innerText = tag;
+            document.getElementById("list").prepend(div);
+          }
+        }else{
+          buffer += e.key;
+        }
+      });
+    </script>
+  </body>
 </html>
