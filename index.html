@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RFID LIVE LOG</title>
+  <style>
+    body { font-family: Arial; padding: 30px; }
+    table { border-collapse: collapse; width: 100%; }
+    th,td { border:1px solid #444;padding:8px;text-align:left;}
+  </style>
+</head>
+<body>
+
+<h2>RFID LIVE LOG</h2>
+<p>Last updated: <span id="time"></span></p>
+
+<table id="table">
+  <tr><th>EPC</th><th>Time</th></tr>
+</table>
+
+<script>
+function load() {
+  fetch("data.json?nocache="+Date.now())
+  .then(r => r.json())
+  .then(rows=>{
+    let tbody="";
+    rows.slice().reverse().forEach(r=>{
+      tbody+=`<tr><td>${r.epc}</td><td>${r.time}</td></tr>`
+    });
+    document.querySelector("#table").innerHTML="<tr><th>EPC</th><th>Time</th></tr>"+tbody;
+    document.getElementById("time").innerText = new Date().toLocaleString();
+  });
+}
+setInterval(load,2000);
+load();
+</script>
+
+</body>
+</html>
